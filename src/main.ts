@@ -1,5 +1,10 @@
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -7,6 +12,8 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Smart - Home-Assistant')
     .build();
+
+  app.use(cookieParser());
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
   await app.listen(3002);
