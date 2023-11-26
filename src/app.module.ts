@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HomeAssistantModule } from './home-assistant/home-assistant.module';
 import { setup } from '@zwisler/ada-lib';
 import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
-import process from 'process';
 
 @Module({
   imports: [
@@ -21,13 +20,7 @@ import process from 'process';
   ],
   controllers: [],
   providers: [
-    {
-      useFactory: () =>
-        setup({
-          amqpUrl: process.env.AMQP_URL,
-        }),
-      provide: NodeRegisterService,
-    },
+
   ],
 })
 export class AppModule {}

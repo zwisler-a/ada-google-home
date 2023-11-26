@@ -8,6 +8,7 @@ import { GoogleHomeFulfillmentService } from './fulfillment.service';
 import { GoogleDeviceEntity } from './persistance/device.entitiy';
 import { GoogleHomeDeviceDefinition } from './data-types/google-home.device-definition';
 import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
+import { setup } from '@zwisler/ada-lib';
 
 @Module({
   imports: [
@@ -15,7 +16,17 @@ import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-regi
     TypeOrmModule.forFeature([GoogleDeviceEntity]),
   ],
   controllers: [GoogleHomeFulfillmentController, GoogleHomeDeviceController],
-  providers: [GoogleHomeFulfillmentService, GoogleHomeDeviceService],
+  providers: [
+    GoogleHomeFulfillmentService,
+    GoogleHomeDeviceService,
+    {
+      useFactory: () =>
+        setup({
+          amqpUrl: process.env.AMQP_URL,
+        }),
+      provide: NodeRegisterService,
+    },
+  ],
 })
 export class HomeAssistantModule {
   constructor(
