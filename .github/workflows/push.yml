@@ -1,0 +1,49 @@
+name: push
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 16.x ]
+
+    steps:
+
+      - name: Copy repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: zwisler/ada-google-home:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        if: github.ref == 'refs/heads/master'
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_auth: ${{ secrets.WEBHOOK_CRED }}
+          data: '{ "service": "${{ secrets.WEBHOOK_SERVICE }}" }'

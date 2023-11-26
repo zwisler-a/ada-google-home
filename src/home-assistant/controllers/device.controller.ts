@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { GoogleDeviceDto } from '../data-types/google-device.dto';
 import { GoogleHomeDeviceService } from '../device.service';
+import { JwtAuthGuard } from '../../auth/jwt.strategy';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Google Home')
 @Controller('/assistant/device')
 export class GoogleHomeDeviceController {

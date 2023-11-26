@@ -8,13 +8,13 @@ import {
   SmartHomeV1SyncDevices,
   SmartHomeV1SyncResponse,
 } from 'actions-on-google';
-import { GoogleHomeDevice } from './data-types/google-home.device';
+import { GoogleHomeDeviceDefinition } from './data-types/google-home.device-definition';
 import { GoogleHomeDeviceService } from './device.service';
 
 @Injectable()
 export class GoogleHomeFulfillmentService {
   app: any;
-  private devices: GoogleHomeDevice[];
+  private devices: GoogleHomeDeviceDefinition[];
 
   constructor(
     private jwtService: JwtService,
@@ -33,8 +33,7 @@ export class GoogleHomeFulfillmentService {
   private async getUserIdOrThrow(headers: Headers): Promise<string> {
     const authorization: string = headers.authorization as string;
     const jwtToken = authorization.replace('Bearer ', '');
-    const accessTokenPayload: any =
-      this.jwtService.verify(jwtToken);
+    const accessTokenPayload: any = this.jwtService.verify(jwtToken);
     return accessTokenPayload.userId;
   }
 

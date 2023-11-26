@@ -6,13 +6,11 @@ import { GoogleHomeFulfillmentController } from './controllers/fulfillment.contr
 import { GoogleHomeDeviceService } from './device.service';
 import { GoogleHomeFulfillmentService } from './fulfillment.service';
 import { GoogleDeviceEntity } from './persistance/device.entitiy';
-import { SmartModule } from '../smart/smart.module';
-import { NodeRegisterService } from '../smart/service/node-register.service';
-import { GoogleHomeDevice } from './data-types/google-home.device';
+import { GoogleHomeDeviceDefinition } from './data-types/google-home.device-definition';
+import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
 
 @Module({
   imports: [
-    SmartModule,
     JwtModule.register({ secret: process.env.JWT_SECRET }),
     TypeOrmModule.forFeature([GoogleDeviceEntity]),
   ],
@@ -32,7 +30,7 @@ export class HomeAssistantModule {
     await this.homeAssistantService.init();
     const devices = await this.deviceService.getDevices();
     const nodes = devices.map(
-      (googleDevice) => new GoogleHomeDevice(googleDevice),
+      (googleDevice) => new GoogleHomeDeviceDefinition(googleDevice),
     );
     this.nodeRegisterService.register(
       nodes,

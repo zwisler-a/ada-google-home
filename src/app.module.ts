@@ -1,31 +1,33 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SmartModule } from './smart/smart.module';
 import { HomeAssistantModule } from './home-assistant/home-assistant.module';
-import { join } from 'path';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { AuthModule } from "./auth/auth.module";
+import { setup } from '@zwisler/ada-lib';
+import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
+import process from 'process';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3307,
-      username: 'root',
-      password: 'password',
-      database: 'db',
+      type: process.env.DB_TYPE as any,
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 3306),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       synchronize: true,
       autoLoadEntities: true,
     }),
-    AuthModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
-    }),
     HomeAssistantModule,
-    SmartModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      useFactory: () =>
+        setup({
+          amqpUrl: process.env.AMQP_URL,
+        }),
+      provide: NodeRegisterService,
+    },
+  ],
 })
 export class AppModule {}
