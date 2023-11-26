@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HomeAssistantModule } from './home-assistant/home-assistant.module';
-import { setup } from '@zwisler/ada-lib';
-import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
+import { JwtAuthGuard, JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -19,8 +18,7 @@ import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-regi
     HomeAssistantModule,
   ],
   controllers: [],
-  providers: [
-
-  ],
+  providers: [JwtStrategy, JwtAuthGuard],
 })
-export class AppModule {}
+export class AppModule {
+}

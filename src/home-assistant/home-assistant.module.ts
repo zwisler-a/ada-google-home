@@ -9,6 +9,7 @@ import { GoogleDeviceEntity } from './persistance/device.entitiy';
 import { GoogleHomeDeviceDefinition } from './data-types/google-home.device-definition';
 import { NodeRegisterService } from '@zwisler/ada-lib/dist/src/service/node-register.service';
 import { setup } from '@zwisler/ada-lib';
+import { JwtAuthGuard } from '../auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { setup } from '@zwisler/ada-lib';
           amqpUrl: process.env.AMQP_URL,
         }),
       provide: NodeRegisterService,
-    },
+    }
   ],
 })
 export class HomeAssistantModule {
